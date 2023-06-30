@@ -15,6 +15,7 @@ A streamed video feed would also be a great feature.
   - storage (database connections)
     - PostgreSQL (main persistence)
     - Redis (sessions and cache)
+    - MinIO (BLOB storage for files)
 - Services (individual functions needing separate runtimes)
   - stream (planned)
   - machine interface (planned)
