@@ -1,17 +1,19 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
+	"go.uber.org/fx"
 
-	"github.com/labstack/echo/v4"
+	"github.com/JingusJohn/kyle-cnc/backend/controllers"
+	"github.com/JingusJohn/kyle-cnc/backend/server"
 )
 
 func main() {
-	fmt.Println("Welcome to the backend!")
-	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})
-	e.Logger.Fatal(e.Start(":1323"))
+	fx.New(
+		fx.Provide(
+			// create general handlers
+			controllers.CreateGeneralController,
+			controllers.CreateAuthController,
+		),
+		fx.Invoke(server.CreateServer),
+	).Run()
 }

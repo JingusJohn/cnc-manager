@@ -1,0 +1,21 @@
+version: '3'
+services:
+  api-gateway-cnc:
+    image: api-gateway-cnc
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    # ports:
+    #   - "8080:1323"
+
+  client-app-cnc:
+    image: client-app-cnc
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "9090:3000"
+
+  # postgres:
+  #   image: postgres
+
