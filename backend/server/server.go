@@ -3,9 +3,11 @@ package server
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"go.uber.org/fx"
 
 	"github.com/JingusJohn/kyle-cnc/backend/controllers"
@@ -18,6 +20,11 @@ func CreateServer(
 ) *echo.Echo {
 	app := echo.New()
 
+	app.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{"Access-Control-Allow-Origin"},
+	}))
+
 	// In the future, these Register functions may take a Group
 	//  instead of the entire server instance. This will allow
 	//  for group-wide middleware application
@@ -25,6 +32,7 @@ func CreateServer(
 	// Add Routes
 	//  Root
 	app.GET("/", func(c echo.Context) error {
+		log.Println("API endpoint hit!")
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 

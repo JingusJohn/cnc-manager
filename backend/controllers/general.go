@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -17,5 +18,6 @@ func (controller *GeneralController) Register(app *echo.Echo) {
 }
 
 func healthcheck(c echo.Context) error {
+	log.Println("Health checked!")
 	return c.String(http.StatusOK, "Healthy!")
 }

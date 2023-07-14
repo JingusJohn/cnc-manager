@@ -1,5 +1,18 @@
 version: '3'
 services:
+
+  # postgres-cnc:
+  #   image: postgres
+  #   networks:
+  #     services-network:
+  #       aliases:
+  #         - sql
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+
   api-gateway-cnc:
     image: api-gateway-cnc
     build:
@@ -7,6 +20,23 @@ services:
       dockerfile: Dockerfile
     # ports:
     #   - "8080:1323"
+    networks:
+      client-network:
+        aliases:
+          - gateway
+      services-network:
+        aliases:
+          - gateway
+    # healthcheck:
+    #   # test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:1323/health", "||", "exit", "1"]
+    #   test: ["CMD", "curl", "-f", "http://localhost:1323/health", "||", "exit", "1"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 5
+    # depends_on:
+    #   postgres-cnc:
+    #     condition: service_healthy
+
 
   client-app-cnc:
     image: client-app-cnc
@@ -15,7 +45,17 @@ services:
       dockerfile: Dockerfile
     ports:
       - "9090:3000"
+    networks:
+      client-network:
+        aliases:
+          - client
+    # depends_on:
+    #   api-gateway-cnc:
+    #     condition: service_healthy
+    # restart: on-failure
 
-  # postgres:
-  #   image: postgres
-
+networks:
+    client-network:
+      name: client-network
+    services-network:
+      name: services-network
