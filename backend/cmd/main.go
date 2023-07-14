@@ -5,6 +5,7 @@ import (
 
 	"github.com/JingusJohn/kyle-cnc/backend/controllers"
 	"github.com/JingusJohn/kyle-cnc/backend/server"
+	"github.com/JingusJohn/kyle-cnc/backend/storage"
 )
 
 func main() {
@@ -13,6 +14,8 @@ func main() {
 			// create general handlers
 			controllers.CreateGeneralController,
 			controllers.CreateAuthController,
+			// create storage solutions
+			storage.NewMinio,
 		),
 		fx.Invoke(server.CreateServer),
 	).Run()

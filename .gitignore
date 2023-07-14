@@ -1,3 +1,5 @@
 backend/bin/*
 
 client/node_modules
+
+minio-data

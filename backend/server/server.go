@@ -11,10 +11,12 @@ import (
 	"go.uber.org/fx"
 
 	"github.com/JingusJohn/kyle-cnc/backend/controllers"
+	"github.com/JingusJohn/kyle-cnc/backend/storage"
 )
 
 func CreateServer(
 	lc fx.Lifecycle,
+	minioStorage *storage.MinioStorageType,
 	generalController *controllers.GeneralController,
 	authController *controllers.AuthController,
 ) *echo.Echo {
@@ -46,6 +48,7 @@ func CreateServer(
 	lc.Append(fx.Hook{
 		OnStart: func(_ context.Context) error {
 			fmt.Println("Welcome to the backend!")
+			minioStorage.CreateDefaultBuckets()
 			go app.Start(":1323")
 			return nil
 		},

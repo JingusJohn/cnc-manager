@@ -13,6 +13,27 @@ services:
   #     timeout: 5s
   #     retries: 5
 
+  minio-cnc:
+    image: quay.io/minio/minio
+    command: server /minio-data --console-address ":9090"
+    ports:
+      - 9000:9000
+      - 9090:9090
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    volumes:
+      - ./minio-data:/data
+    networks:
+      services-network:
+        aliases:
+          - minio-s3
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+
   api-gateway-cnc:
     image: api-gateway-cnc
     build:
@@ -27,15 +48,21 @@ services:
       services-network:
         aliases:
           - gateway
+    environment:
+      BUILD_ENV: docker.dev #docker.prod, local.dev, local.prod
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
     # healthcheck:
     #   # test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:1323/health", "||", "exit", "1"]
     #   test: ["CMD", "curl", "-f", "http://localhost:1323/health", "||", "exit", "1"]
     #   interval: 30s
     #   timeout: 10s
     #   retries: 5
-    # depends_on:
-    #   postgres-cnc:
-    #     condition: service_healthy
+    depends_on:
+      # postgres-cnc:
+      #   condition: service_healthy
+      minio-cnc:
+        condition: service_healthy
 
 
   client-app-cnc:
@@ -44,7 +71,7 @@ services:
       context: ./client
       dockerfile: Dockerfile
     ports:
-      - "9090:3000"
+      - "5173:3000"
     networks:
       client-network:
         aliases:
